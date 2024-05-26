@@ -144,3 +144,58 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 - 타임리프 프로토타입은 약간 특이한데, HTML 주석에 약간의 구문을 더했다.
 - HTML 파일을 웹 브라우저에서 그대로 열어보면 HTML 주석이기 때문에 이 부분이 웹 브라우저가 렌더링하지 않는다.
 - 타임리프 렌더링을 거치면 이 부분이 정상 렌더링 된다.
+
+
+# 섹션 2 - 타임리프 - 스프링 통합과 폼
+
+1. 환경설정
+```
+plugins {
+id 'java'
+id 'org.springframework.boot' version '3.2.4'
+id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'hello'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+```
+
+문제점  package javax.annotation does not exist
+1. javax.annotation.PostConstruct는 Java EE에서 제공하던 어노테이션입니다.
+2. Java EE가 Jakarta EE로 바뀌면서, 패키지 이름도 javax에서 jakarta로 변경돼 javax.annotation.PostConstruct 대신 jakarta.annotation.PostConstruct를 사용해야 합니다.
+```
+import jakarta.annotation.PostConstruct;
+```
+
+``` Gradle 추가
+dependencies {
+    // Jakarta Annotations API
+    implementation 'jakarta.annotation:jakarta.annotation-api:2.0.0'
+}
+```
